@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>عرض وتحميل الحقيبة التدريبية</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f2f2f2;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      background: #1f2a60;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 100;
+      gap: 15px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2ed573;
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      transition: background 0.3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      white-space: nowrap;
+    }
+
+    .download-btn:hover {
+      background: #26af5f;
+    }
+
+    .iframe-container {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+      background: #e9e9e9;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: white;
+    }
+
+    .error-message {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #1f2a60;
+      background: #f7f7f7;
+      padding: 24px;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+
+      .title {
+        font-size: 15px;
+      }
+
+      .download-btn {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="title" id="pageTitle">الحقيبة التدريبية</div>
+
+  <a href="#" class="download-btn" id="downloadBtn" download>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="fill: currentColor;">
+      <path d="M5 20H19V18H5V20ZM19 9H15V3H9V9H5L12 16L19 9Z"/>
+    </svg>
+    <span>تحميل الملف مباشر</span>
+  </a>
+</header>
+
+<div class="iframe-container">
+  <iframe id="pdfViewer" title="الحقيبة التدريبية"></iframe>
+  <div class="error-message" id="errorMessage">
+    تعذّر تحديد الحقيبة المطلوبة.<br>
+    ارجع إلى الصفحة الرئيسية واختر إحدى الحقائب.
+  </div>
+</div>
+
+<script>
+  (function () {
+    const bags = {
+      companies: {
+        title: 'حقيبة أساسيات نظام الشركات',
+        pdf: 'companies.pdf',
+        downloadName: 'حقيبة أساسيات نظام الشركات.pdf'
+      },
+      financial: {
+        title: 'حقيبة إيداع القوائم المالية تحت التعديل',
+        pdf: 'financial-statements.pdf',
+        downloadName: 'حقيبة ايداع القوائم المالية تحت التعديل.pdf'
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const bagKey = params.get('bag');
+    const selectedBag = bags[bagKey];
+
+    const pageTitle = document.getElementById('pageTitle');
+    const pdfViewer = document.getElementById('pdfViewer');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const errorMessage = document.getElementById('errorMessage');
+
+    if (!selectedBag) {
+      document.title = 'الحقيبة غير موجودة';
+      pageTitle.textContent = 'الحقيبة غير موجودة';
+      pdfViewer.style.display = 'none';
+      downloadBtn.style.display = 'none';
+      errorMessage.style.display = 'flex';
+      return;
+    }
+
+    document.title = selectedBag.title;
+    pageTitle.textContent = selectedBag.title;
+    pdfViewer.title = selectedBag.title;
+
+    const pdfUrl = new URL(selectedBag.pdf, window.location.href).href;
+    pdfViewer.src = pdfUrl + '#view=FitH&toolbar=1&navpanes=0';
+    downloadBtn.href = selectedBag.pdf;
+    downloadBtn.setAttribute('download', selectedBag.downloadName);
+  })();
+</script>
+
+</body>
+</html>
